@@ -104,7 +104,11 @@ std::string WifiConfigurationAp::GetSsid()
 {
     // Get MAC and use it to generate a unique SSID
     uint8_t mac[6];
+    #ifdef CONFIG_ESP_HOSTED_ENABLED
+    ESP_ERROR_CHECK(esp_read_mac(mac, ESP_MAC_EFUSE_FACTORY));
+    #else
     ESP_ERROR_CHECK(esp_read_mac(mac, ESP_MAC_WIFI_SOFTAP));
+    #endif
     char ssid[32];
     snprintf(ssid, sizeof(ssid), "%s-%02X%02X", ssid_prefix_.c_str(), mac[4], mac[5]);
     return std::string(ssid);
